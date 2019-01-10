@@ -1,9 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const bcrypt = require ('bcrypt-nodejs')
+const cors = require ('cors');
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
+
 const database = {
 	users: [
 		{
@@ -22,6 +25,13 @@ const database = {
 			entries: 0,
 			joined: new Date()
 		},
+	],
+	login: [
+		{
+			id: '987',
+			hash: '',
+			email: 'john@gmail.com'
+		}
 	]
 }
 
@@ -32,7 +42,7 @@ app.get('/', (req,res) => {
 app.post('/signin', (req,res) => {
 	if(req.body.email === database.users[0].email &&
 		req.body.password === database.users[0].password){
-		res.json('Success');
+		res.json(database.users[0]);
 	} else{
 		res.status(400).json('Error logging in');
 	}
@@ -44,7 +54,7 @@ app.post('/register', (req,res) => {
 		id: '125',
 		name: name,
 		email: email,
-		password: password,
+		// password: password, 
 		entries: 0,
 		joined: new Date()		
 	})
@@ -63,7 +73,7 @@ app.get('/profile/:id', (req,res) => {
 	 if(!found){
 	 	res.status(404).json('not found');
 	 }
-})
+})	
 
 app.put('/image/', (req,res) => {
 	 const {id} = req.body;
